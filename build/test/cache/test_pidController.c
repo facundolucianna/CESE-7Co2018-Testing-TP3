@@ -258,3 +258,37 @@ void test_pidController_error_positive_derivative_control(void)
 
 
 }
+
+
+
+
+
+
+
+void test_pidController_proportional_derivative_control_non_negative_output(void)
+
+{
+
+    Kp = 1;
+
+    Kd = 10;
+
+    errorPID = 2;
+
+    lastError = 6;
+
+
+
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((0)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(130), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}

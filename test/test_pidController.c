@@ -115,3 +115,18 @@ void test_pidController_error_positive_derivative_control(void)
     TEST_ASSERT_EQUAL_UINT8(102, heater);
 
 }
+
+//Test a implementar, luego de un bucle, la salida en el PD en el calefactor
+//no debe ser negativa
+void test_pidController_proportional_derivative_control_non_negative_output(void)
+{
+    Kp = 1;
+    Kd = 10;
+    errorPID = 2;
+    lastError = 6;
+
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
+
+    TEST_ASSERT_EQUAL_UINT8(0, heater);
+
+}
