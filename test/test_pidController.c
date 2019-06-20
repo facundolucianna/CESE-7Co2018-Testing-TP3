@@ -8,6 +8,7 @@ static  int32_t errorAcumulated = 0;
 static  uint8_t heater = 2;
 static  uint32_t Kp = 10;
 static  uint32_t Kd = 10;
+static  uint32_t Ki = 0;
 static  float deltaT = 0.1;
 
 void setUp(void)
@@ -15,6 +16,7 @@ void setUp(void)
   //Variables PID
   Kp = 10;
   Kd = 1;
+  Ki = 0;
   deltaT = 0.1;
   errorPID = 4;
   lastError = 4;
@@ -33,7 +35,7 @@ void test_pidController_error_negative_heater_off(void)
 
     errorPID = -2;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -46,7 +48,7 @@ void test_pidController_error_positive_heater_on(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_GREATER_THAN_UINT8(0, heater);
 
@@ -59,7 +61,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(40, heater);
 
@@ -72,7 +74,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
     errorPID = 40;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0xFF, heater);
 
@@ -85,7 +87,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
     Kp = 0;
     lastError = 2;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(20, heater);
 
@@ -98,7 +100,7 @@ void test_pidController_error_positive_heater_last_error(void)
 
     lastError = 2;
     errorPID = 8;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_INT16(8, lastError);
 
@@ -113,7 +115,7 @@ void test_pidController_error_positive_derivative_control(void)
     errorPID = 2;
     lastError = 1;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(102, heater);
 
@@ -128,7 +130,7 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
     errorPID = 2;
     lastError = 6;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -138,9 +140,9 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
 void test_pidController_sum_error(void)
 {
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
     errorPID = -2;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_INT32(2, errorAcumulated);
 
@@ -152,15 +154,36 @@ void test_pidController_integral_error(void)
 {
     Kp = 0;
     Kd = 0;
+    Ki = 1;
     errorPID = 4;
     lastError = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
     errorPID = 20;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
     errorPID = 0;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(2, heater);
+
+}
+
+//Test a implementar, en cada bucle se debe tener en cuenta la componente integral
+//del control PID
+void test_pidController_integral_control(void)
+{
+    Kp = 10;
+    Kd = 0;
+    Ki = 2;
+    errorPID = 4;
+    lastError = 2;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    errorPID = 20;
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    errorPID = 0;
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+    TEST_ASSERT_EQUAL_UINT8(4, heater);
 
 }

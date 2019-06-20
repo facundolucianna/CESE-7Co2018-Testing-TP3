@@ -17,6 +17,8 @@ static uint32_t Kp = 10;
 
 static uint32_t Kd = 10;
 
+static uint32_t Ki = 0;
+
 static float deltaT = 0.1;
 
 
@@ -30,6 +32,8 @@ void setUp(void)
   Kp = 10;
 
   Kd = 1;
+
+  Ki = 0;
 
   deltaT = 0.1;
 
@@ -67,7 +71,7 @@ void test_pidController_error_negative_heater_off(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -75,7 +79,7 @@ void test_pidController_error_negative_heater_off(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(38), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(40), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -97,7 +101,7 @@ void test_pidController_error_positive_heater_on(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -105,7 +109,7 @@ void test_pidController_error_positive_heater_on(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(51), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(53), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -127,7 +131,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -135,7 +139,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(64), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(66), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -157,7 +161,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -165,7 +169,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(77), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(79), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -187,7 +191,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
     lastError = 2;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -195,7 +199,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(90), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(92), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -217,7 +221,7 @@ void test_pidController_error_positive_heater_last_error(void)
 
     errorPID = 8;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -225,7 +229,7 @@ void test_pidController_error_positive_heater_last_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(103), UNITY_DISPLAY_STYLE_INT16);
+   ), (UNITY_UINT)(105), UNITY_DISPLAY_STYLE_INT16);
 
 
 
@@ -251,7 +255,7 @@ void test_pidController_error_positive_derivative_control(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -259,7 +263,7 @@ void test_pidController_error_positive_derivative_control(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(118), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(120), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -285,7 +289,7 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -293,7 +297,7 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
 
    ((void *)0)
 
-   ), (UNITY_UINT)(133), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(135), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -309,11 +313,11 @@ void test_pidController_sum_error(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     errorPID = -2;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -321,7 +325,7 @@ void test_pidController_sum_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(145), UNITY_DISPLAY_STYLE_INT32);
+   ), (UNITY_UINT)(147), UNITY_DISPLAY_STYLE_INT32);
 
 
 
@@ -341,21 +345,23 @@ void test_pidController_integral_error(void)
 
     Kd = 0;
 
+    Ki = 1;
+
     errorPID = 4;
 
     lastError = 4;
 
 
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     errorPID = 20;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     errorPID = 0;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
 
 
@@ -363,7 +369,51 @@ void test_pidController_integral_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(164), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(167), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_integral_control(void)
+
+{
+
+    Kp = 10;
+
+    Kd = 0;
+
+    Ki = 2;
+
+    errorPID = 4;
+
+    lastError = 2;
+
+
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+    errorPID = 20;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+    errorPID = 0;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((4)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(187), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
