@@ -6,6 +6,8 @@
   Unity.CurrentTestName = #TestFunc; \
   Unity.CurrentTestLineNumber = TestLineNum; \
   Unity.NumberOfTests++; \
+  CMock_Init(); \
+  UNITY_CLR_DETAILS(); \
   if (TEST_PROTECT()) \
   { \
       setUp(); \
@@ -14,7 +16,9 @@
   if (TEST_PROTECT()) \
   { \
     tearDown(); \
+    CMock_Verify(); \
   } \
+  CMock_Destroy(); \
   UnityConcludeTest(); \
 }
 
@@ -23,10 +27,12 @@
 #define UNITY_INCLUDE_SETUP_STUBS
 #endif
 #include "unity.h"
+#include "cmock.h"
 #ifndef UNITY_EXCLUDE_SETJMP_H
 #include <setjmp.h>
 #endif
 #include <stdio.h>
+#include "mock_bmp180.h"
 
 int GlobalExpectCount;
 int GlobalVerifyOrder;
@@ -46,7 +52,25 @@ extern void test_pidController_proportional_derivative_control_non_negative_outp
 extern void test_pidController_sum_error(void);
 extern void test_pidController_integral_error(void);
 extern void test_pidController_integral_control(void);
+extern void test_pidController_calculate_error(void);
 
+
+/*=======Mock Management=====*/
+static void CMock_Init(void)
+{
+  GlobalExpectCount = 0;
+  GlobalVerifyOrder = 0;
+  GlobalOrderError = NULL;
+  mock_bmp180_Init();
+}
+static void CMock_Verify(void)
+{
+  mock_bmp180_Verify();
+}
+static void CMock_Destroy(void)
+{
+  mock_bmp180_Destroy();
+}
 
 /*=======Suite Setup=====*/
 static void suite_setup(void)
@@ -70,7 +94,10 @@ static int suite_teardown(int num_failures)
 void resetTest(void);
 void resetTest(void)
 {
+  CMock_Verify();
+  CMock_Destroy();
   tearDown();
+  CMock_Init();
   setUp();
 }
 
@@ -80,17 +107,19 @@ int main(void)
 {
   suite_setup();
   UnityBegin("test_pidController.c");
-  RUN_TEST(test_pidController_error_negative_heater_off, 33);
-  RUN_TEST(test_pidController_error_positive_heater_on, 46);
-  RUN_TEST(test_pidController_error_positive_heater_proportional, 59);
-  RUN_TEST(test_pidController_error_positive_heater_saturation, 72);
-  RUN_TEST(test_pidController_error_positive_heater_derivative_scheme, 85);
-  RUN_TEST(test_pidController_error_positive_heater_last_error, 98);
-  RUN_TEST(test_pidController_error_positive_derivative_control, 111);
-  RUN_TEST(test_pidController_proportional_derivative_control_non_negative_output, 126);
-  RUN_TEST(test_pidController_sum_error, 140);
-  RUN_TEST(test_pidController_integral_error, 153);
-  RUN_TEST(test_pidController_integral_control, 173);
+  RUN_TEST(test_pidController_error_negative_heater_off, 35);
+  RUN_TEST(test_pidController_error_positive_heater_on, 48);
+  RUN_TEST(test_pidController_error_positive_heater_proportional, 61);
+  RUN_TEST(test_pidController_error_positive_heater_saturation, 74);
+  RUN_TEST(test_pidController_error_positive_heater_derivative_scheme, 87);
+  RUN_TEST(test_pidController_error_positive_heater_last_error, 100);
+  RUN_TEST(test_pidController_error_positive_derivative_control, 113);
+  RUN_TEST(test_pidController_proportional_derivative_control_non_negative_output, 128);
+  RUN_TEST(test_pidController_sum_error, 142);
+  RUN_TEST(test_pidController_integral_error, 155);
+  RUN_TEST(test_pidController_integral_control, 175);
+  RUN_TEST(test_pidController_calculate_error, 195);
 
+  CMock_Guts_MemFreeFinal();
   return suite_teardown(UnityEnd());
 }

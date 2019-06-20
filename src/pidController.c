@@ -39,3 +39,15 @@ int16_t upwinding_scheme(int16_t xi, int16_t ximinusone, float deltaT)
   output = (int16_t) ((xi - ximinusone) / deltaT);
 
 }
+
+//Obtiene error de comparar lectura de sensor de temp con temperatura seteada
+int16_t obtain_error(int16_t setpoint)
+{
+  int16_t output = 0;
+
+  int16_t temp = bmp180ReadTemp();
+  output = setpoint - temp;
+
+  return output;
+
+}

@@ -1,9 +1,11 @@
 #include "unity.h"
 #include "pidController.h"
+#include "mock_bmp180.h"
 
 static  int16_t errorPID = 0;
 static  int16_t lastError = 0;
 static  int32_t errorAcumulated = 0;
+static  int32_t setpoint = 36;
 
 static  uint8_t heater = 2;
 static  uint32_t Kp = 10;
@@ -185,5 +187,22 @@ void test_pidController_integral_control(void)
     heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(4, heater);
+
+}
+
+// El sistema realiza una lectura de la temperatura mediante el sensor de temp y
+//calcula con la temperatura seteada para obtener el error
+void test_pidController_calculate_error(void)
+{
+
+    setpoint = 36;
+    //temperature = 32;
+
+    //When
+    bmp180ReadTemp_ExpectAndReturn(32); //Mock up of bmp180ReadTemp (not implemented yet)
+
+    //Then
+    errorPID = obtain_error(setpoint);
+    TEST_ASSERT_EQUAL_INT16(4, errorPID);
 
 }
