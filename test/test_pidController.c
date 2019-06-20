@@ -53,3 +53,16 @@ void test_pidController_error_positive_heater_proportional(void)
     TEST_ASSERT_EQUAL_UINT8(40, heater);
 
 }
+
+//Test a implementar, cuando el valor de calefacto supera el valor maximo, se
+//satura al maximo valor.
+void test_pidController_error_positive_heater_saturation(void)
+{
+
+    errorPID = 40;
+
+    heater = PIDloop(errorPID, Kp);
+
+    TEST_ASSERT_EQUAL_UINT8(0xFF, heater);
+
+}

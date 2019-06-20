@@ -3,7 +3,7 @@
 uint8_t PIDloop(int16_t error, uint32_t Kp)
 {
 
-  uint8_t output = 0;
+  uint16_t output = 0;
 
   //Cuando el error entre la SETPOINT y la temperatura medida es negativa, el calefactor se debe apagar
   //Cuando el error entre la SETPOINT y la temperatura medida es positivo, el calefactor se debe prender.
@@ -12,8 +12,15 @@ uint8_t PIDloop(int16_t error, uint32_t Kp)
 
     output = Kp * error;
 
+    //cuando el valor de calefacto supera el valor maximo, se satura al maximo valor.
+    if (output > 0xFF) {
+
+      output = 0xFF;
+
+    }
+
   }
 
-  return output;
+  return (uint8_t) output;
 
 }

@@ -118,3 +118,33 @@ void test_pidController_error_positive_heater_proportional(void)
 
 
 }
+
+
+
+
+
+
+
+void test_pidController_error_positive_heater_saturation(void)
+
+{
+
+
+
+    errorPID = 40;
+
+
+
+    heater = PIDloop(errorPID, Kp);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((0xFF)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(66), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}
