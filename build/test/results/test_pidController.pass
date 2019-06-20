@@ -4,23 +4,26 @@
   :file: test_pidController.c
 :successes:
 - :test: test_pidController_error_negative_heater_off
-  :line: 20
+  :line: 26
   :message: ''
 - :test: test_pidController_error_positive_heater_on
-  :line: 33
+  :line: 39
   :message: ''
 - :test: test_pidController_error_positive_heater_proportional
-  :line: 46
+  :line: 52
   :message: ''
 - :test: test_pidController_error_positive_heater_saturation
-  :line: 59
+  :line: 65
+  :message: ''
+- :test: test_pidController_error_positive_heater_derivative_scheme
+  :line: 78
   :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 4
-  :passed: 4
+  :total: 5
+  :passed: 5
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.004198422999252216
+:time: 0.003609269000662607

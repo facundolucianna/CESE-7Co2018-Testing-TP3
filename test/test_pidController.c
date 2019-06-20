@@ -2,13 +2,19 @@
 #include "pidController.h"
 
 static  int16_t errorPID = 0;
+static  int16_t lastError = 0;
 static  uint8_t heater = 2;
 static  uint32_t Kp = 10;
+static  float deltaT = 0.1;
 
 void setUp(void)
 {
   //Variable PID
   Kp = 10;
+  deltaT = 0.1;
+  errorPID = 4;
+  lastError = 4;
+
 }
 
 void tearDown(void)
@@ -22,7 +28,7 @@ void test_pidController_error_negative_heater_off(void)
 
     errorPID = -2;
 
-    heater = PIDloop(errorPID, Kp);
+    heater = PIDloop(errorPID, lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -35,7 +41,7 @@ void test_pidController_error_positive_heater_on(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, Kp);
+    heater = PIDloop(errorPID, lastError, Kp, deltaT);
 
     TEST_ASSERT_GREATER_THAN_UINT8(0, heater);
 
@@ -48,7 +54,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, Kp);
+    heater = PIDloop(errorPID, lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(40, heater);
 
@@ -61,8 +67,21 @@ void test_pidController_error_positive_heater_saturation(void)
 
     errorPID = 40;
 
-    heater = PIDloop(errorPID, Kp);
+    heater = PIDloop(errorPID, lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0xFF, heater);
+
+}
+
+//Test a implementar, el controlPID debe calcular la derivada del error con
+//un esquema upwinding ( (errorNew - errorLast)/deltaT )
+void test_pidController_error_positive_heater_derivative_scheme(void)
+{
+
+    Kp = 0;
+    lastError = 2;
+    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+
+    TEST_ASSERT_EQUAL_UINT8(20, heater);
 
 }

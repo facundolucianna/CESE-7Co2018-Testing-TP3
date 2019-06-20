@@ -1,6 +1,6 @@
 #include "pidController.h"
 
-uint8_t PIDloop(int16_t error, uint32_t Kp)
+uint8_t PIDloop(int16_t error, int16_t lastError, uint32_t Kp, float deltaT)
 {
 
   uint16_t output = 0;
@@ -10,9 +10,11 @@ uint8_t PIDloop(int16_t error, uint32_t Kp)
   //Cuando el error entre la SETPOINT y la temperatura medida es positivo, el calefactor se debe prender proporcional al error (Control P).
   if( error > 0 ) {
 
-    output = Kp * error;
+    //El controlPID debe calcular la derivada del error con un esquema upwinding
+    output = (uint16_t) ((error - lastError) / deltaT);
+    output = output + Kp * error;
 
-    //cuando el valor de calefacto supera el valor maximo, se satura al maximo valor.
+    //cuando el valor de calefactor supera el valor maximo, se satura al maximo valor.
     if (output > 0xFF) {
 
       output = 0xFF;
