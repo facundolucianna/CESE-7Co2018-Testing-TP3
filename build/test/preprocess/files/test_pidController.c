@@ -326,3 +326,45 @@ void test_pidController_sum_error(void)
 
 
 }
+
+
+
+
+
+
+
+void test_pidController_integral_error(void)
+
+{
+
+    Kp = 0;
+
+    Kd = 0;
+
+    errorPID = 4;
+
+    lastError = 4;
+
+
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+
+    errorPID = 20;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+
+    errorPID = 0;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((2)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(164), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}

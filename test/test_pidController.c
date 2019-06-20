@@ -145,3 +145,22 @@ void test_pidController_sum_error(void)
     TEST_ASSERT_EQUAL_INT32(2, errorAcumulated);
 
 }
+
+//Test a implementar, en cada bucle se debe tener en cuenta la integral del error para
+//calcula el calefactor
+void test_pidController_integral_error(void)
+{
+    Kp = 0;
+    Kd = 0;
+    errorPID = 4;
+    lastError = 4;
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    errorPID = 20;
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+    errorPID = 0;
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, deltaT);
+
+    TEST_ASSERT_EQUAL_UINT8(2, heater);
+
+}

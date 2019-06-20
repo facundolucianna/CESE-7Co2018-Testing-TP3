@@ -12,6 +12,7 @@ uint8_t PIDloop(int16_t error, int16_t * lastError, int32_t * errorAcumulated, u
   //El controlPID debe calcular la derivada del error con un esquema upwinding
   output = Kd * upwinding_scheme(error, *lastError, deltaT);
   output = output + Kp * error;
+  output = output + (*errorAcumulated)*deltaT;
 
   //cuando el valor de calefactor supera el valor maximo, se satura al maximo valor.
   if (output > 0xFF) {
@@ -21,7 +22,6 @@ uint8_t PIDloop(int16_t error, int16_t * lastError, int32_t * errorAcumulated, u
   if (output < 0) {
     output = 0;
   }
-
 
   *lastError = error; //Guarda el ultimo valor de error
   *errorAcumulated = *errorAcumulated + error; //Acumula el error
