@@ -28,7 +28,7 @@ void test_pidController_error_negative_heater_off(void)
 
     errorPID = -2;
 
-    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -41,7 +41,7 @@ void test_pidController_error_positive_heater_on(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
 
     TEST_ASSERT_GREATER_THAN_UINT8(0, heater);
 
@@ -54,7 +54,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(40, heater);
 
@@ -67,7 +67,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
     errorPID = 40;
 
-    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(0xFF, heater);
 
@@ -80,8 +80,21 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
     Kp = 0;
     lastError = 2;
-    heater = PIDloop(errorPID, lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
 
     TEST_ASSERT_EQUAL_UINT8(20, heater);
+
+}
+
+//Test a implementar, luego de un bucle, el control PID debe almacenar el ultimo
+//valor de error.
+void test_pidController_error_positive_heater_last_error(void)
+{
+
+    lastError = 2;
+    errorPID = 8;
+    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+
+    TEST_ASSERT_EQUAL_INT16(8, lastError);
 
 }

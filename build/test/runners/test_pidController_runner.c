@@ -40,6 +40,7 @@ extern void test_pidController_error_positive_heater_on(void);
 extern void test_pidController_error_positive_heater_proportional(void);
 extern void test_pidController_error_positive_heater_saturation(void);
 extern void test_pidController_error_positive_heater_derivative_scheme(void);
+extern void test_pidController_error_positive_heater_last_error(void);
 
 
 /*=======Suite Setup=====*/
@@ -79,6 +80,7 @@ int main(void)
   RUN_TEST(test_pidController_error_positive_heater_proportional, 52);
   RUN_TEST(test_pidController_error_positive_heater_saturation, 65);
   RUN_TEST(test_pidController_error_positive_heater_derivative_scheme, 78);
+  RUN_TEST(test_pidController_error_positive_heater_last_error, 91);
 
   return suite_teardown(UnityEnd());
 }

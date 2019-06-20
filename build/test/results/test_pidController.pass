@@ -18,12 +18,15 @@
 - :test: test_pidController_error_positive_heater_derivative_scheme
   :line: 78
   :message: ''
+- :test: test_pidController_error_positive_heater_last_error
+  :line: 91
+  :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 5
-  :passed: 5
+  :total: 6
+  :passed: 6
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.003609269000662607
+:time: 0.003729494999788585

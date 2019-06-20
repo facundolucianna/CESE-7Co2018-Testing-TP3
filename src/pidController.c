@@ -1,6 +1,6 @@
 #include "pidController.h"
 
-uint8_t PIDloop(int16_t error, int16_t lastError, uint32_t Kp, float deltaT)
+uint8_t PIDloop(int16_t error, int16_t * lastError, uint32_t Kp, float deltaT)
 {
 
   uint16_t output = 0;
@@ -11,7 +11,7 @@ uint8_t PIDloop(int16_t error, int16_t lastError, uint32_t Kp, float deltaT)
   if( error > 0 ) {
 
     //El controlPID debe calcular la derivada del error con un esquema upwinding
-    output = (uint16_t) ((error - lastError) / deltaT);
+    output = (uint16_t) ((error - (*lastError)) / deltaT);
     output = output + Kp * error;
 
     //cuando el valor de calefactor supera el valor maximo, se satura al maximo valor.
@@ -22,6 +22,8 @@ uint8_t PIDloop(int16_t error, int16_t lastError, uint32_t Kp, float deltaT)
     }
 
   }
+
+  *lastError = error; //Guarda el ultimo valor de error
 
   return (uint8_t) output;
 
