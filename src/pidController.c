@@ -1,6 +1,6 @@
 #include "pidController.h"
 
-uint8_t PIDloop(int16_t error, int16_t * lastError, uint32_t Kp, uint32_t Kd, float deltaT)
+uint8_t PIDloop(int16_t error, int16_t * lastError, int32_t * errorAcumulated, uint32_t Kp, uint32_t Kd, float deltaT)
 {
 
   int16_t output = 0;
@@ -26,6 +26,7 @@ uint8_t PIDloop(int16_t error, int16_t * lastError, uint32_t Kp, uint32_t Kd, fl
   }
 
   *lastError = error; //Guarda el ultimo valor de error
+  *errorAcumulated = *errorAcumulated + error; //Acumula el error  
 
   return (uint8_t) output;
 
