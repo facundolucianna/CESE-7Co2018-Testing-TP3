@@ -39,12 +39,15 @@
 - :test: test_pidController_calculate_error
   :line: 197
   :message: ''
+- :test: test_pidController_sensor_disconnected
+  :line: 214
+  :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 12
-  :passed: 12
+  :total: 13
+  :passed: 13
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.004569821998302359
+:time: 0.003793084000790259

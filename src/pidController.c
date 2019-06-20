@@ -41,12 +41,20 @@ int16_t upwinding_scheme(int16_t xi, int16_t ximinusone, float deltaT)
 }
 
 //Obtiene error de comparar lectura de sensor de temp con temperatura seteada
-uint8_t obtain_error(int16_t * errorPID, int16_t setpoint)
+int8_t obtain_error(int16_t * errorPID, int16_t setpoint)
 {
-  uint8_t output = 0;
+  int8_t output = 0;
 
   int16_t temp = bmp180ReadTemp();
-  *errorPID = setpoint - temp;
+
+  //Si no hubo un error en la lectura del sensor
+  if (temp > 0) {
+    *errorPID = setpoint - temp;
+  }
+  else { //En cambio si hubo, da el error que hubo
+    *errorPID = 0;
+    output = temp;
+  }
 
   return output;
 

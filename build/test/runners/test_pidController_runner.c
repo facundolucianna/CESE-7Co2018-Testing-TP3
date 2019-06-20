@@ -53,6 +53,7 @@ extern void test_pidController_sum_error(void);
 extern void test_pidController_integral_error(void);
 extern void test_pidController_integral_control(void);
 extern void test_pidController_calculate_error(void);
+extern void test_pidController_sensor_disconnected(void);
 
 
 /*=======Mock Management=====*/
@@ -119,6 +120,7 @@ int main(void)
   RUN_TEST(test_pidController_integral_error, 157);
   RUN_TEST(test_pidController_integral_control, 177);
   RUN_TEST(test_pidController_calculate_error, 197);
+  RUN_TEST(test_pidController_sensor_disconnected, 214);
 
   CMock_Guts_MemFreeFinal();
   return suite_teardown(UnityEnd());

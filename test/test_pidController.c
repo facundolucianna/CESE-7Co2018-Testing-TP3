@@ -7,7 +7,7 @@ static  int16_t lastError = 0;
 static  int32_t errorAcumulated = 0;
 static  int32_t setpoint = 36;
 
-static  uint8_t allOk = 0;
+static  int8_t allOk = 0;
 
 static  uint8_t heater = 2;
 static  uint32_t Kp = 10;
@@ -206,5 +206,22 @@ void test_pidController_calculate_error(void)
     //Then
     allOk = obtain_error(&errorPID, setpoint);
     TEST_ASSERT_EQUAL_INT16(4, errorPID);
+
+}
+
+// El sistema realiza una lectura de la temperatura mediante el sensor de temp y
+// el sensor esta desconectado
+void test_pidController_sensor_disconnected(void)
+{
+
+    setpoint = 36;
+    //temperature = 32;
+
+    //When
+    bmp180ReadTemp_ExpectAndReturn(-1); //Mock up of bmp180ReadTemp (not implemented yet)
+
+    //Then
+    allOk = obtain_error(&errorPID, setpoint);
+    TEST_ASSERT_EQUAL_INT8(-1, allOk);
 
 }

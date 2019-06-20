@@ -14,7 +14,7 @@ static int32_t setpoint = 36;
 
 
 
-static uint8_t allOk = 0;
+static int8_t allOk = 0;
 
 
 
@@ -459,6 +459,44 @@ void test_pidController_calculate_error(void)
    ((void *)0)
 
    ), (UNITY_UINT)(208), UNITY_DISPLAY_STYLE_INT16);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_sensor_disconnected(void)
+
+{
+
+
+
+    setpoint = 36;
+
+
+
+
+
+
+
+    bmp180ReadTemp_CMockExpectAndReturn(221, -1);
+
+
+
+
+
+    allOk = obtain_error(&errorPID, setpoint);
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_INT8 )((-1)), (UNITY_INT)(UNITY_INT8 )((allOk)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(225), UNITY_DISPLAY_STYLE_INT8);
 
 
 
