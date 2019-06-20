@@ -2,6 +2,7 @@
 #include "pidController.h"
 #include "mock_bmp180.h"
 
+static  pid_variables_t PIDVariables;
 static  int16_t errorPID = 0;
 static  int16_t lastError = 0;
 static  int32_t errorAcumulated = 0;
@@ -39,7 +40,9 @@ void test_pidController_error_negative_heater_off(void)
 
     errorPID = -2;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -52,7 +55,8 @@ void test_pidController_error_positive_heater_on(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_GREATER_THAN_UINT8(0, heater);
 
@@ -65,7 +69,8 @@ void test_pidController_error_positive_heater_proportional(void)
 
     errorPID = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(40, heater);
 
@@ -78,7 +83,8 @@ void test_pidController_error_positive_heater_saturation(void)
 
     errorPID = 40;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(0xFF, heater);
 
@@ -90,8 +96,13 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 {
 
     Kp = 0;
+    Ki = 0;
+    Kd = 1;
+
     lastError = 2;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(20, heater);
 
@@ -104,7 +115,9 @@ void test_pidController_error_positive_heater_last_error(void)
 
     lastError = 2;
     errorPID = 8;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_INT16(8, lastError);
 
@@ -114,12 +127,16 @@ void test_pidController_error_positive_heater_last_error(void)
 //por su coeficiente y sumarse con el control proporcional (control derivativo)
 void test_pidController_error_positive_derivative_control(void)
 {
+
     Kp = 1;
     Kd = 10;
+    Ki = 0;
+
     errorPID = 2;
     lastError = 1;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(102, heater);
 
@@ -129,12 +146,16 @@ void test_pidController_error_positive_derivative_control(void)
 //no debe ser negativa
 void test_pidController_proportional_derivative_control_non_negative_output(void)
 {
+
     Kp = 1;
     Kd = 10;
+    Ki = 0;
+
     errorPID = 2;
     lastError = 6;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(0, heater);
 
@@ -143,10 +164,11 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
 //Test a implementar, en cada bucle se debe ir acumulando el error historico
 void test_pidController_sum_error(void)
 {
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
     errorPID = -2;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_INT32(2, errorAcumulated);
 
@@ -156,17 +178,20 @@ void test_pidController_sum_error(void)
 //calcula el calefactor
 void test_pidController_integral_error(void)
 {
+
     Kp = 0;
     Kd = 0;
     Ki = 1;
     errorPID = 4;
     lastError = 4;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
     errorPID = 20;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
     errorPID = 0;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(2, heater);
 
@@ -182,11 +207,13 @@ void test_pidController_integral_control(void)
     errorPID = 4;
     lastError = 2;
 
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    PIDInitVariables(&PIDVariables, Kp, Kd, Ki, deltaT);
+
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
     errorPID = 20;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
     errorPID = 0;
-    heater = PIDloop(errorPID, &lastError, &errorAcumulated, Kp, Kd, Ki, deltaT);
+    heater = PIDloop(errorPID, &lastError, &errorAcumulated, &PIDVariables);
 
     TEST_ASSERT_EQUAL_UINT8(4, heater);
 
@@ -218,10 +245,10 @@ void test_pidController_sensor_disconnected(void)
     //temperature = 32;
 
     //When
-    bmp180ReadTemp_ExpectAndReturn(-1); //Mock up of bmp180ReadTemp (not implemented yet)
+    bmp180ReadTemp_ExpectAndReturn(BMP180_SENSOR_TURN_OFF); //Mock up of bmp180ReadTemp (not implemented yet)
 
     //Then
     allOk = obtain_error(&errorPID, setpoint);
-    TEST_ASSERT_EQUAL_INT8(-1, allOk);
+    TEST_ASSERT_EQUAL_INT8(BMP180_SENSOR_TURN_OFF, allOk);
 
 }
