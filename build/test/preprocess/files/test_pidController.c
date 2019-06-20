@@ -11,6 +11,8 @@ static uint8_t heater = 2;
 
 static uint32_t Kp = 10;
 
+static uint32_t Kd = 10;
+
 static float deltaT = 0.1;
 
 
@@ -22,6 +24,8 @@ void setUp(void)
 
 
   Kp = 10;
+
+  Kd = 1;
 
   deltaT = 0.1;
 
@@ -57,7 +61,7 @@ void test_pidController_error_negative_heater_off(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -65,7 +69,7 @@ void test_pidController_error_negative_heater_off(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(33), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(35), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -87,7 +91,7 @@ void test_pidController_error_positive_heater_on(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -95,7 +99,7 @@ void test_pidController_error_positive_heater_on(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(46), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(48), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -117,7 +121,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -125,7 +129,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(59), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(61), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -147,7 +151,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
 
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -155,7 +159,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(72), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(74), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -177,7 +181,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
     lastError = 2;
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -185,7 +189,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(85), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(87), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -207,7 +211,7 @@ void test_pidController_error_positive_heater_last_error(void)
 
     errorPID = 8;
 
-    heater = PIDloop(errorPID, &lastError, Kp, deltaT);
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
 
 
 
@@ -215,7 +219,41 @@ void test_pidController_error_positive_heater_last_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(98), UNITY_DISPLAY_STYLE_INT16);
+   ), (UNITY_UINT)(100), UNITY_DISPLAY_STYLE_INT16);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_error_positive_derivative_control(void)
+
+{
+
+    Kp = 1;
+
+    Kd = 10;
+
+    errorPID = 2;
+
+    lastError = 1;
+
+
+
+    heater = PIDloop(errorPID, &lastError, Kp, Kd, deltaT);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((102)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(115), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
