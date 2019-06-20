@@ -1,4 +1,5 @@
 #include "build/temp/_test_pidController.c"
+#include "mock_bmp180.h"
 #include "pidController.h"
 #include "unity.h"
 
@@ -8,6 +9,12 @@ static int16_t errorPID = 0;
 static int16_t lastError = 0;
 
 static int32_t errorAcumulated = 0;
+
+static int32_t setpoint = 36;
+
+
+
+static uint8_t allOk = 0;
 
 
 
@@ -79,7 +86,7 @@ void test_pidController_error_negative_heater_off(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(40), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(44), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -109,7 +116,7 @@ void test_pidController_error_positive_heater_on(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(53), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(57), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -139,7 +146,7 @@ void test_pidController_error_positive_heater_proportional(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(66), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(70), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -169,7 +176,7 @@ void test_pidController_error_positive_heater_saturation(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(79), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(83), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -199,7 +206,7 @@ void test_pidController_error_positive_heater_derivative_scheme(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(92), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(96), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -229,7 +236,7 @@ void test_pidController_error_positive_heater_last_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(105), UNITY_DISPLAY_STYLE_INT16);
+   ), (UNITY_UINT)(109), UNITY_DISPLAY_STYLE_INT16);
 
 
 
@@ -263,7 +270,7 @@ void test_pidController_error_positive_derivative_control(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(120), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(124), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -297,7 +304,7 @@ void test_pidController_proportional_derivative_control_non_negative_output(void
 
    ((void *)0)
 
-   ), (UNITY_UINT)(135), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(139), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -325,7 +332,7 @@ void test_pidController_sum_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(147), UNITY_DISPLAY_STYLE_INT32);
+   ), (UNITY_UINT)(151), UNITY_DISPLAY_STYLE_INT32);
 
 
 
@@ -369,7 +376,7 @@ void test_pidController_integral_error(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(167), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(171), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -413,7 +420,45 @@ void test_pidController_integral_control(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(187), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(191), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_calculate_error(void)
+
+{
+
+
+
+    setpoint = 36;
+
+
+
+
+
+
+
+    bmp180ReadTemp_CMockExpectAndReturn(204, 32);
+
+
+
+
+
+    allOk = obtain_error(&errorPID, setpoint);
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_INT16)((4)), (UNITY_INT)(UNITY_INT16)((errorPID)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(208), UNITY_DISPLAY_STYLE_INT16);
 
 
 
