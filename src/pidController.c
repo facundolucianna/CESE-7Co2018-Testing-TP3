@@ -8,25 +8,23 @@ uint8_t PIDloop(int16_t error, int16_t * lastError, int32_t * errorAcumulated, u
   //Cuando el error entre la SETPOINT y la temperatura medida es negativa, el calefactor se debe apagar
   //Cuando el error entre la SETPOINT y la temperatura medida es positivo, el calefactor se debe prender.
   //Cuando el error entre la SETPOINT y la temperatura medida es positivo, el calefactor se debe prender proporcional al error (Control P).
-  if( error > 0 ) {
 
-    //El controlPID debe calcular la derivada del error con un esquema upwinding
-    output = Kd * upwinding_scheme(error, *lastError, deltaT);
-    output = output + Kp * error;
+  //El controlPID debe calcular la derivada del error con un esquema upwinding
+  output = Kd * upwinding_scheme(error, *lastError, deltaT);
+  output = output + Kp * error;
 
-    //cuando el valor de calefactor supera el valor maximo, se satura al maximo valor.
-    if (output > 0xFF) {
-      output = 0xFF;
-    }
-    //Si el valor es menor de cero, el calefactor se apaga
-    if (output < 0) {
-      output = 0;
-    }
-
+  //cuando el valor de calefactor supera el valor maximo, se satura al maximo valor.
+  if (output > 0xFF) {
+    output = 0xFF;
+  }
+  //Si el valor es menor de cero, el calefactor se apaga
+  if (output < 0) {
+    output = 0;
   }
 
+
   *lastError = error; //Guarda el ultimo valor de error
-  *errorAcumulated = *errorAcumulated + error; //Acumula el error  
+  *errorAcumulated = *errorAcumulated + error; //Acumula el error
 
   return (uint8_t) output;
 
