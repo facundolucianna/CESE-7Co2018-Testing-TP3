@@ -36,6 +36,7 @@ char* GlobalOrderError;
 extern void setUp(void);
 extern void tearDown(void);
 extern void test_pidController_error_negative_heater_off(void);
+extern void test_pidController_error_positive_heater_on(void);
 
 
 /*=======Suite Setup=====*/
@@ -71,6 +72,7 @@ int main(void)
   suite_setup();
   UnityBegin("test_pidController.c");
   RUN_TEST(test_pidController_error_negative_heater_off, 17);
+  RUN_TEST(test_pidController_error_positive_heater_on, 30);
 
   return suite_teardown(UnityEnd());
 }

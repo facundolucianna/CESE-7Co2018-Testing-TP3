@@ -33,6 +33,8 @@ void test_pidController_error_negative_heater_off(void)
 
 {
 
+
+
     errorPID = -2;
 
 
@@ -41,11 +43,41 @@ void test_pidController_error_negative_heater_off(void)
 
 
 
-    UnityAssertEqualNumber((UNITY_INT)((0)), (UNITY_INT)((heater)), (
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((0)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
 
    ((void *)0)
 
-   ), (UNITY_UINT)(23), UNITY_DISPLAY_STYLE_INT);
+   ), (UNITY_UINT)(24), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_error_positive_heater_on(void)
+
+{
+
+
+
+    errorPID = 4;
+
+
+
+    heater = PIDloop(errorPID);
+
+
+
+    UnityAssertGreaterOrLessOrEqualNumber((UNITY_INT)(UNITY_UINT8 )((0)), (UNITY_INT)(UNITY_UINT8 )((heater)), UNITY_GREATER_THAN, (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(37), UNITY_DISPLAY_STYLE_UINT8);
 
 
 

@@ -6,12 +6,15 @@
 - :test: test_pidController_error_negative_heater_off
   :line: 17
   :message: ''
+- :test: test_pidController_error_positive_heater_on
+  :line: 30
+  :message: ''
 :failures: []
 :ignores: []
 :counts:
-  :total: 1
-  :passed: 1
+  :total: 2
+  :passed: 2
   :failed: 0
   :ignored: 0
 :stdout: []
-:time: 0.003970898998886696
+:time: 0.003487719999611727
