@@ -7,11 +7,17 @@ static int16_t errorPID = 0;
 
 static uint8_t heater = 2;
 
+static uint32_t Kp = 10;
+
 
 
 void setUp(void)
 
 {
+
+
+
+  Kp = 10;
 
 }
 
@@ -39,7 +45,7 @@ void test_pidController_error_negative_heater_off(void)
 
 
 
-    heater = PIDloop(errorPID);
+    heater = PIDloop(errorPID, Kp);
 
 
 
@@ -47,7 +53,7 @@ void test_pidController_error_negative_heater_off(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(24), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(27), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
@@ -69,7 +75,7 @@ void test_pidController_error_positive_heater_on(void)
 
 
 
-    heater = PIDloop(errorPID);
+    heater = PIDloop(errorPID, Kp);
 
 
 
@@ -77,7 +83,37 @@ void test_pidController_error_positive_heater_on(void)
 
    ((void *)0)
 
-   ), (UNITY_UINT)(37), UNITY_DISPLAY_STYLE_UINT8);
+   ), (UNITY_UINT)(40), UNITY_DISPLAY_STYLE_UINT8);
+
+
+
+}
+
+
+
+
+
+
+
+void test_pidController_error_positive_heater_proportional(void)
+
+{
+
+
+
+    errorPID = 4;
+
+
+
+    heater = PIDloop(errorPID, Kp);
+
+
+
+    UnityAssertEqualNumber((UNITY_INT)(UNITY_UINT8 )((40)), (UNITY_INT)(UNITY_UINT8 )((heater)), (
+
+   ((void *)0)
+
+   ), (UNITY_UINT)(53), UNITY_DISPLAY_STYLE_UINT8);
 
 
 
